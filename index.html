@@ -254,6 +254,19 @@
       border-radius: 5px;
       background-color: #fff;
       border: 1px solid #dbdbdb;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+    .message.sent {
+      margin-left: auto;
+      background-color: #0095f6;
+      color: #fff;
+      border: none;
+    }
+    .message.received {
+      margin-right: auto;
+      background-color: #f1f1f1;
+      color: #262626;
     }
     .message .sender {
       font-weight: bold;
@@ -363,6 +376,7 @@
 
     let currentUser = null;
     let currentUserId = null;
+    let selectedUserId = null; // ID of the user you're chatting with
 
     // Show Sign Up Form
     window.showSignUp = function () {
@@ -544,8 +558,9 @@
         alert("Please enter a user ID.");
         return;
       }
-      // Add user to a list of contacts (you can implement this in Firebase)
+      selectedUserId = userIdToAdd; // Set the selected user ID
       alert(`User ${userIdToAdd} added!`);
+      loadMessages();
     };
 
     // Send Message
@@ -558,7 +573,12 @@
         return;
       }
 
-      const messagesRef = ref(database, `messages/${currentUserId}`);
+      if (!selectedUserId) {
+        alert("Please add a user to chat with.");
+        return;
+      }
+
+      const messagesRef = ref(database, `messages/${currentUserId}_${selectedUserId}`);
       push(messagesRef, {
         text: message,
         sender: currentUserId,
@@ -570,16 +590,20 @@
 
     // Load Messages
     function loadMessages() {
-      const messagesRef = ref(database, `messages/${currentUserId}`);
+      if (!selectedUserId) return;
+
+      const messagesRef = ref(database, `messages/${currentUserId}_${selectedUserId}`);
+      messagesElement.innerHTML = ""; // Clear previous messages
+
       onChildAdded(messagesRef, (snapshot) => {
         const message = snapshot.val();
         const messageElement = document.createElement("div");
-        messageElement.className = "message";
+        messageElement.className = `message ${message.sender === currentUserId ? "sent" : "received"}`;
         messageElement.innerHTML = `
-          <div class="sender">${message.sender}</div>
           <div class="text">${message.text}</div>
         `;
         messagesElement.appendChild(messageElement);
+        messagesElement.scrollTop = messagesElement.scrollHeight; // Scroll to the bottom
       });
     }
 
@@ -592,7 +616,6 @@
         currentUserId = user.uid;
         userIdElement.textContent = currentUserId; // Show user's unique ID
         messagingSection.style.display = "block"; // Show messaging section
-        loadMessages();
       } else {
         authButtons.style.display = "block";
         postUpload.style.display = "none";

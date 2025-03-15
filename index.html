@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShareMeNow</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fafafa; /* Instagram-like background */
+      color: #262626; /* Dark text */
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff; /* White background for posts */
+      padding-bottom: 80px; /* Space for bottom navigation */
+    }
+    h1 {
+      color: #0095f6; /* Instagram blue */
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .auth-buttons {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .auth-buttons button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #0095f6; /* Instagram blue */
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .auth-buttons button:hover {
+      background-color: #0077cc; /* Slightly darker blue on hover */
+    }
+    .feed {
+      margin-top: 20px;
+    }
+    .post {
+      border: 1px solid #dbdbdb; /* Light gray border */
+      border-radius: 10px;
+      margin-bottom: 20px;
+      background-color: #fff; /* White background for posts */
+    }
+    .post-header {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #dbdbdb; /* Light gray separator */
+    }
+    .post-header img.profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .post-header .username {
+      font-weight: bold;
+      color: #262626; /* Dark text */
+    }
+    .post-image img {
+      width: 100%;
+      height: auto;
+      border-radius: 5px 5px 0 0;
+    }
+    .post-actions {
+      padding: 10px;
+      display: flex;
+      gap: 10px;
+    }
+    .post-actions button {
+      background: none;
+      border: none;
+      color: #262626; /* Dark text */
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .post-actions button:hover {
+      color: #0095f6; /* Instagram blue */
+    }
+    .post-caption {
+      padding: 10px;
+      font-size: 14px;
+      color: #262626; /* Dark text */
+    }
+    .post-comments {
+      padding: 10px;
+      border-top: 1px solid #dbdbdb; /* Light gray separator */
+    }
+    .comment {
+      margin-bottom: 10px;
+    }
+    .comment .username {
+      font-weight: bold;
+      color: #262626; /* Dark text */
+    }
+    .comment .text {
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    .comment-box {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      border-top: 1px solid #dbdbdb; /* Light gray separator */
+    }
+    .comment-box input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #dbdbdb; /* Light gray border */
+      border-radius: 5px;
+      background-color: #fafafa; /* Light background */
+      color: #262626; /* Dark text */
+      outline: none;
+    }
+    .comment-box button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #0095f6; /* Instagram blue */
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .comment-box button:hover {
+      background-color: #0077cc; /* Slightly darker blue on hover */
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #fff; /* White background */
+      border-top: 1px solid #dbdbdb; /* Light gray border */
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+    }
+    .bottom-nav button {
+      background: none;
+      border: none;
+      color: #262626; /* Dark text */
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .bottom-nav button:hover {
+      color: #0095f6; /* Instagram blue */
+    }
+    .post-upload {
+      position: fixed;
+      bottom: 80px; /* Above the bottom navigation */
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #fff;
+      border: 1px solid #dbdbdb;
+      border-radius: 10px;
+      padding: 10px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: none; /* Hidden by default */
+    }
+    .post-upload textarea {
+      width: 100%;
+      height: 80px;
+      border: none;
+      background-color: transparent;
+      color: #262626; /* Dark text */
+      font-size: 16px;
+      resize: none;
+      outline: none;
+    }
+    .post-upload textarea::placeholder {
+      color: #8e8e8e; /* Light gray placeholder */
+    }
+    .post-upload .upload-icon {
+      margin-top: 10px;
+      cursor: pointer;
+      color: #0095f6; /* Instagram blue */
+    }
+    .post-upload .upload-icon:hover {
+      color: #0077cc; /* Slightly darker blue on hover */
+    }
+    .post-upload button {
+      display: block;
+      margin-left: auto;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #0095f6; /* Instagram blue */
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .post-upload button:hover {
+      background-color: #0077cc; /* Slightly darker blue on hover */
+    }
+    .messaging-section {
+      display: none; /* Hidden by default */
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px solid #dbdbdb;
+      border-radius: 10px;
+      background-color: #fff;
+    }
+    .messaging-section h2 {
+      color: #0095f6;
+      margin-bottom: 10px;
+    }
+    .messaging-section input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #dbdbdb;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    .messaging-section button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #0095f6;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .messaging-section button:hover {
+      background-color: #0077cc;
+    }
+    .messages {
+      margin-top: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #dbdbdb;
+      border-radius: 5px;
+      padding: 10px;
+      background-color: #fafafa;
+    }
+    .message {
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #fff;
+      border: 1px solid #dbdbdb;
+    }
+    .message .sender {
+      font-weight: bold;
+      color: #0095f6;
+    }
+    .message .text {
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ShareMeNow</h1>
+
+    <!-- Auth Buttons -->
+    <div class="auth-buttons" id="authButtons">
+      <button onclick="showSignUp()">Sign Up</button>
+      <button onclick="showLogin()">Log In</button>
+    </div>
+
+    <!-- Sign Up Form -->
+    <div id="signUpForm" style="display: none;">
+      <h2>Sign Up</h2>
+      <input type="email" id="signUpEmail" placeholder="Email">
+      <input type="password" id="signUpPassword" placeholder="Password">
+      <button onclick="signUp()">Sign Up</button>
+      <button onclick="hideAuthForms()">Cancel</button>
+    </div>
+
+    <!-- Log In Form -->
+    <div id="loginForm" style="display: none;">
+      <h2>Log In</h2>
+      <input type="email" id="loginEmail" placeholder="Email">
+      <input type="password" id="loginPassword" placeholder="Password">
+      <button onclick="login()">Log In</button>
+      <button onclick="hideAuthForms()">Cancel</button>
+    </div>
+
+    <!-- Feed -->
+    <div class="feed" id="feed"></div>
+
+    <!-- Messaging Section -->
+    <div class="messaging-section" id="messagingSection">
+      <h2>Private Messaging</h2>
+      <p>Your unique ID: <strong id="userId"></strong></p>
+      <input type="text" id="addUserInput" placeholder="Enter user ID to add">
+      <button onclick="addUser()">Add User</button>
+      <div class="messages" id="messages"></div>
+      <input type="text" id="messageInput" placeholder="Type a message...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <!-- Post Upload Section -->
+  <div class="post-upload" id="postUpload">
+    <textarea id="tweetInput" placeholder="What's happening?"></textarea>
+    <div class="upload-icon" onclick="document.getElementById('photoInput').click()">
+      <span class="material-icons">image</span>
+    </div>
+    <input type="file" id="photoInput" accept="image/*" style="display: none;">
+    <button id="postButton">Post</button>
+  </div>
+
+  <!-- Bottom Navigation Bar -->
+  <div class="bottom-nav">
+    <button onclick="showFeed()"><span class="material-icons">home</span></button>
+    <button onclick="showMessaging()"><span class="material-icons">chat</span></button>
+    <button onclick="togglePostUpload()"><span class="material-icons">add_box</span></button>
+    <button><span class="material-icons">favorite</span></button>
+    <button><span class="material-icons">account_circle</span></button>
+  </div>
+
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+    import { getDatabase, ref, push, onChildAdded, update, increment, set, onValue } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-storage.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyClRtPv7ELrOBZ1RZ9NzaaoQX2F4jb9ypI",
+      authDomain: "sharemenow-d5c72.firebaseapp.com",
+      databaseURL: "https://sharemenow-d5c72-default-rtdb.firebaseio.com",
+      projectId: "sharemenow-d5c72",
+      storageBucket: "sharemenow-d5c72.appspot.com",
+      messagingSenderId: "1025411046755",
+      appId: "1:1025411046755:web:6bc507fa7e9d97e3b04756",
+      measurementId: "G-XN3M5YM2EH"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const auth = getAuth(app);
+    const storage = getStorage(app);
+
+    // DOM Elements
+    const authButtons = document.getElementById("authButtons");
+    const signUpForm = document.getElementById("signUpForm");
+    const loginForm = document.getElementById("loginForm");
+    const postUpload = document.getElementById("postUpload");
+    const feed = document.getElementById("feed");
+    const messagingSection = document.getElementById("messagingSection");
+    const userIdElement = document.getElementById("userId");
+    const messagesElement = document.getElementById("messages");
+
+    let currentUser = null;
+    let currentUserId = null;
+
+    // Show Sign Up Form
+    window.showSignUp = function () {
+      authButtons.style.display = "none";
+      signUpForm.style.display = "block";
+    };
+
+    // Show Log In Form
+    window.showLogin = function () {
+      authButtons.style.display = "none";
+      loginForm.style.display = "block";
+    };
+
+    // Hide Auth Forms
+    window.hideAuthForms = function () {
+      authButtons.style.display = "block";
+      signUpForm.style.display = "none";
+      loginForm.style.display = "none";
+    };
+
+    // Sign Up
+    window.signUp = function () {
+      const email = document.getElementById("signUpEmail").value;
+      const password = document.getElementById("signUpPassword").value;
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          const userId = user.uid; // Firebase UID is permanent
+          set(ref(database, `users/${userId}`), { email: email });
+          alert("Signed up successfully!");
+          hideAuthForms();
+        })
+        .catch((error) => {
+          alert("Error: " + error.message);
+        });
+    };
+
+    // Log In
+    window.login = function () {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          currentUser = user;
+          currentUserId = user.uid;
+          alert("Logged in successfully!");
+          hideAuthForms();
+          userIdElement.textContent = currentUserId; // Show user's unique ID
+          messagingSection.style.display = "block"; // Show messaging section
+          loadMessages();
+        })
+        .catch((error) => {
+          alert("Error: " + error.message);
+        });
+    };
+
+    // Toggle Post Upload Section
+    window.togglePostUpload = function () {
+      postUpload.style.display = postUpload.style.display === "none" ? "block" : "none";
+    };
+
+    // Post Tweet
+    document.getElementById("postButton").addEventListener("click", async () => {
+      const tweetInput = document.getElementById("tweetInput");
+      const photoInput = document.getElementById("photoInput");
+      const tweet = tweetInput.value.trim();
+      const file = photoInput.files[0];
+
+      if (tweet === "" && !file) {
+        alert("Please enter text or upload a photo.");
+        return;
+      }
+
+      let photoURL = null;
+      if (file) {
+        try {
+          const fileRef = storageRef(storage, "photos/" + file.name);
+          await uploadBytes(fileRef, file);
+          photoURL = await getDownloadURL(fileRef);
+        } catch (error) {
+          console.error("Error uploading photo:", error);
+          alert("Failed to upload photo. Please try again.");
+          return;
+        }
+      }
+
+      const tweetsRef = ref(database, "tweets");
+      push(tweetsRef, {
+        text: tweet,
+        photoURL: photoURL,
+        timestamp: Date.now(),
+        username: auth.currentUser.email.split("@")[0],
+        likes: 0,
+        reposts: 0,
+        comments: []
+      });
+
+      tweetInput.value = "";
+      photoInput.value = "";
+      postUpload.style.display = "none"; // Hide post upload section after posting
+    });
+
+    // Display Tweets
+    const tweetsRef = ref(database, "tweets");
+    onChildAdded(tweetsRef, (snapshot) => {
+      const tweet = snapshot.val();
+      const postElement = document.createElement("div");
+      postElement.className = "post";
+
+      postElement.innerHTML = `
+        <div class="post-header">
+          <img class="profile-pic" src="https://via.placeholder.com/40" alt="Profile Picture">
+          <div class="username">${tweet.username}</div>
+        </div>
+        ${tweet.photoURL ? `<div class="post-image"><img src="${tweet.photoURL}" alt="Post Image"></div>` : ""}
+        <div class="post-actions">
+          <button onclick="likePost('${snapshot.key}')"><span class="material-icons">favorite</span></button>
+          <button onclick="commentOnPost('${snapshot.key}')"><span class="material-icons">comment</span></button>
+          <button onclick="sharePost('${snapshot.key}')"><span class="material-icons">send</span></button>
+        </div>
+        <div class="post-caption">${tweet.text}</div>
+        <div class="post-comments">
+          ${tweet.comments ? tweet.comments.map(comment => `
+            <div class="comment">
+              <div class="username">${comment.username}</div>
+              <div class="text">${comment.text}</div>
+            </div>
+          `).join("") : ""}
+        </div>
+        <div class="comment-box">
+          <input type="text" id="commentInput-${snapshot.key}" placeholder="Add a comment...">
+          <button onclick="postComment('${snapshot.key}')">Post</button>
+        </div>
+      `;
+
+      feed.prepend(postElement); // Add new posts to the top
+    });
+
+    // Like Post
+    window.likePost = function (postId) {
+      const postRef = ref(database, `tweets/${postId}`);
+      update(postRef, {
+        likes: increment(1)
+      });
+    };
+
+    // Comment on Post
+    window.commentOnPost = function (postId) {
+      const commentInput = document.getElementById(`commentInput-${postId}`);
+      const comment = commentInput.value.trim();
+
+      if (comment === "") {
+        alert("Please enter a comment.");
+        return;
+      }
+
+      const commentsRef = ref(database, `tweets/${postId}/comments`);
+      push(commentsRef, {
+        text: comment,
+        username: auth.currentUser.email.split("@")[0],
+        timestamp: Date.now()
+      });
+
+      commentInput.value = "";
+    };
+
+    // Share Post
+    window.sharePost = function (postId) {
+      alert("Share functionality coming soon!");
+    };
+
+    // Add User
+    window.addUser = function () {
+      const userIdToAdd = document.getElementById("addUserInput").value.trim();
+      if (userIdToAdd === "") {
+        alert("Please enter a user ID.");
+        return;
+      }
+      // Add user to a list of contacts (you can implement this in Firebase)
+      alert(`User ${userIdToAdd} added!`);
+    };
+
+    // Send Message
+    window.sendMessage = function () {
+      const messageInput = document.getElementById("messageInput");
+      const message = messageInput.value.trim();
+
+      if (message === "") {
+        alert("Please enter a message.");
+        return;
+      }
+
+      const messagesRef = ref(database, `messages/${currentUserId}`);
+      push(messagesRef, {
+        text: message,
+        sender: currentUserId,
+        timestamp: Date.now()
+      });
+
+      messageInput.value = "";
+    };
+
+    // Load Messages
+    function loadMessages() {
+      const messagesRef = ref(database, `messages/${currentUserId}`);
+      onChildAdded(messagesRef, (snapshot) => {
+        const message = snapshot.val();
+        const messageElement = document.createElement("div");
+        messageElement.className = "message";
+        messageElement.innerHTML = `
+          <div class="sender">${message.sender}</div>
+          <div class="text">${message.text}</div>
+        `;
+        messagesElement.appendChild(messageElement);
+      });
+    }
+
+    // Check Auth State
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        authButtons.style.display = "none";
+        postUpload.style.display = "none"; // Hide post upload by default
+        currentUser = user;
+        currentUserId = user.uid;
+        userIdElement.textContent = currentUserId; // Show user's unique ID
+        messagingSection.style.display = "block"; // Show messaging section
+        loadMessages();
+      } else {
+        authButtons.style.display = "block";
+        postUpload.style.display = "none";
+        messagingSection.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>
